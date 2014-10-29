@@ -1030,6 +1030,13 @@ else ifeq ($(TARGET_DEVICE), nex)
     TARGET_SCREEN_WIDTH := 480
     BRIGHTNESS_SYS_FILE := "/sys/class/leds/lcd-backlight/brightness"
 
+#TCL S720T
+else ifeq ($(TARGET_DEVICE), cm_s720t)
+    TARGET_COMMON_NAME := TCL S720t
+    TARGET_SCREEN_HEIGHT := 1280
+    TARGET_SCREEN_WIDTH := 720
+    BRIGHTNESS_SYS_FILE := "/sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness"
+
 endif
 #---- end device specific config
 
