@@ -282,7 +282,7 @@ int check_backup_size(const char* backup_path) {
     ui_print("\n>> Free space: %dMb (%d%%)\n", free_mb, free_percent);
     ui_print(">> Needed space: %dMb\n", backup_size_mb);
     if (ret)
-        ui_print(">> Unknown partitions size (%d):%s\n", ret, skipped_parts);
+        ui_print(">> 未知的分区大小（%d）：%s\n", ret, skipped_parts);
 
     // dedupe wrapper needs less space than actual backup size (incremental backups)
     // only check free space in Mb if we use tar or tar.gz as a default format
@@ -292,7 +292,7 @@ int check_backup_size(const char* backup_path) {
         if (!ui_is_initialized()) {
             // do not prompt when it is an "adb shell nandroid backup" command
             LOGW("\n>>> Backup could fail with I/O error!! <<<\n\n");
-        } else if (nand_prompt_on_low_space.value && !confirm_selection("Low free space! Continue anyway?", "Yes - Continue Nandroid Job"))
+        } else if (nand_prompt_on_low_space.value && !confirm_selection("空闲空间低！无论如何都继续？", "是 - 继续Nandroid工作"))
             return -1;
     }
 
@@ -353,13 +353,14 @@ void show_backup_stats(const char* backup_path) {
         compression = 0;
     else compression = 1 - ((long double)(final_size) / (long double)(Backup_Size));
 
-    ui_print("\nBackup complete!\n");
-    ui_print("Backup time: %02lld:%02lld mn\n", minutes, seconds);
-    ui_print("Backup size: %.2LfMb\n", (long double) final_size / 1048576);
+    ui_print("\n备份结束！\n");
+    ui_print("备份时间：%02lld:%02lld mn\n", minutes, seconds);
+    ui_print("备份大小：%.2LfMb\n", (long double) final_size / 1048576);
+
     // print compression % only if it is a tar / tar.gz backup
     // keep also for tar to show it is 0% compression
     if (default_backup_handler != dedupe_compress_wrapper)
-        ui_print("Compression: %.2Lf%%\n", compression * 100);
+        ui_print("压缩率：%.2Lf%%\n", compression * 100);
 }
 
 // show restore stats (only time for now)
@@ -368,8 +369,8 @@ void show_restore_stats() {
     long long minutes = total_msec / 60000LL;
     long long seconds = (total_msec % 60000LL) / 1000LL;
 
-    ui_print("\nRestore complete!\n");
-    ui_print("Restore time: %02lld:%02lld mn\n", minutes, seconds);
+    ui_print("\n恢复结束！\n");
+    ui_print("恢复时间：%02lld:%02lld mn\n", minutes, seconds);
 }
 
 // custom backup: raw backup through shell (ext4 raw backup not supported in backup_raw_partition())
@@ -378,7 +379,7 @@ void show_restore_stats() {
 // ret = 0 if success, else ret = 1
 int dd_raw_backup_handler(const char* backup_path, const char* root) {
     Volume *vol = volume_for_path(root);
-    ui_print("\n>> Backing up %s...\nUsing raw mode...\n", root);
+    ui_print("\n>> 正在备份%s...\n使用raw模式...\n", root);
     if (vol == NULL || vol->fs_type == NULL) {
         LOGE("volume not found! Skipping raw backup of %s\n", root);
         return 0;
@@ -419,10 +420,10 @@ int dd_raw_backup_handler(const char* backup_path, const char* root) {
 // for now, only called directly from outside functions (not from nandroid_restore())
 // user selects an image file to restore, so backup_file_image path is already mounted
 int dd_raw_restore_handler(const char* backup_file_image, const char* root) {
-    ui_print("\n>> Restoring %s...\n", root);
+    ui_print("\n>> 正在恢复%s...\n", root);
     Volume *vol = volume_for_path(root);
     if (vol == NULL || vol->fs_type == NULL) {
-        ui_print("volume not found! Skipping raw restore of %s...\n", root);
+        ui_print("卷没有找到！跳过raw恢复%s...\n", root);
         return 0;
     }
 
@@ -447,13 +448,13 @@ int dd_raw_restore_handler(const char* backup_file_image, const char* root) {
     }
 
     if (raw_image_format[i] == NULL) {
-        sprintf(errmsg, "invalid image file! Failed to restore %s to %s\n", filename, root);
+        sprintf(errmsg, "错误的镜像文件！恢复%s到%s失败\n", filename, root);
         return print_and_error(errmsg, NANDROID_ERROR_GENERAL);
     }
 
     //make sure file exists
     if (!file_found(backup_file_image)) {
-        sprintf(errmsg, "%s not found. Skipping restore of %s\n", backup_file_image, root);
+        sprintf(errmsg, "%s没有找到。跳过恢复%s\n", backup_file_image, root);
         return print_and_error(errmsg, NANDROID_ERROR_GENERAL);
     }
 
@@ -461,7 +462,7 @@ int dd_raw_restore_handler(const char* backup_file_image, const char* root) {
     int ret = 0;
     char* device_mmcblk;
 
-    ui_print("Restoring %s to %s\n", filename, vol->mount_point);
+    ui_print("恢复%s到%s\n", filename, vol->mount_point);
     if (strstr(vol->blk_device, "/dev/block/mmcblk") != NULL || strstr(vol->blk_device, "/dev/block/mtdblock") != NULL) {
         sprintf(tmp, "raw-backup.sh -r '%s' %s %s", backup_file_image, vol->blk_device, vol->mount_point);
     } else if (vol->blk_device2 != NULL &&
@@ -471,13 +472,13 @@ int dd_raw_restore_handler(const char* backup_file_image, const char* root) {
         sprintf(tmp, "raw-backup.sh -r '%s' %s %s", backup_file_image, device_mmcblk, vol->mount_point);
         free(device_mmcblk);
     } else {
-        sprintf(errmsg, "raw restore: no device found (%s)\n", root);
+        sprintf(errmsg, "raw恢复：没有找到设备（%s）\n", root);
         return print_and_error(errmsg, NANDROID_ERROR_GENERAL);
     }
 
     ret = __system(tmp);
     if (0 != ret) {
-        sprintf(errmsg, "failed raw restore of %s to %s\n", filename, root);
+        sprintf(errmsg, "raw恢复%s到%s失败\n", filename, root);
         print_and_error(errmsg, ret);
     } else {
         finish_nandroid_job();
@@ -655,14 +656,14 @@ int Make_File_List(const char* backup_path) {
         LOGE("Error generating file list\n");
         return -1;
     }
-    ui_print("Done, generated %i file(s).\n", (Makelist_File_Count + 1));
+    ui_print("完毕，生成了%i个文件。\n", (Makelist_File_Count + 1));
     return (Makelist_File_Count + 1);
 }
 
 int twrp_backup_wrapper(const char* backup_path, const char* backup_file_image, int callback) {
     Volume *v = volume_for_path(backup_path);
     if (v == NULL) {
-        ui_print("Unable to find volume.\n");
+        ui_print("无法找到卷。\n");
         return -1;
     }
 
@@ -674,7 +675,7 @@ int twrp_backup_wrapper(const char* backup_path, const char* backup_file_image, 
     // Always use split format (simpler code) - Build lists of files to backup
     char tmp[PATH_MAX];
     int backup_count;
-    ui_print("Breaking backup file into multiple archives...\nGenerating file lists\n");
+    ui_print("中止备份到多个文件...\n正在生成文件列表\n");
     backup_count = Make_File_List(backup_path);
     if (backup_count < 1) {
         LOGE("Error generating file list!\n");
@@ -684,7 +685,7 @@ int twrp_backup_wrapper(const char* backup_path, const char* backup_file_image, 
     // check we are not backing up an empty volume as it would fail to restore (tar: short read)
     // check first if a filelist was generated. If not, ensure volume is 0 size. Else, it could be an error while 
     if (!file_found("/tmp/list/filelist000")) {
-        ui_print("Nothing to backup. Skipping %s\n", BaseName(backup_path));
+        ui_print("没有可备份的。跳过%s\n", BaseName(backup_path));
         return 0;
     }
 
@@ -702,7 +703,7 @@ int twrp_backup_wrapper(const char* backup_path, const char* backup_file_image, 
         else
             sprintf(tmp, "set -o pipefail ; (tar -cpv -T /tmp/list/filelist%03i | pigz -c -%d >'%s%03i') 2> /proc/self/fd/1 ; exit $?", index, compression_value.value, backup_file_image, index);
 
-        ui_print("  * Backing up archive %i/%i\n", (index + 1), backup_count);
+        ui_print("  * 正在备份存档%i/%i\n", (index + 1), backup_count);
         FILE *fp = __popen(tmp, "r");
         if (fp == NULL) {
             LOGE("Unable to execute tar.\n");
@@ -755,7 +756,7 @@ int twrp_backup(const char* backup_path) {
     refresh_default_backup_handler();
 
     if (ensure_path_mounted(backup_path) != 0)
-        return print_and_error("Can't mount backup path.\n", NANDROID_ERROR_GENERAL);
+        return print_and_error("无法挂载备份路径。\n", NANDROID_ERROR_GENERAL);
 
     int ret;
     struct statfs s;
@@ -763,11 +764,11 @@ int twrp_backup(const char* backup_path) {
     // refresh size stats for backup_path
     // this will also ensure volume for backup path != NULL
     if (0 != Get_Size_Via_statfs(backup_path))
-        return print_and_error("Unable to stat backup path.\n", NANDROID_ERROR_GENERAL);
+        return print_and_error("无法统计备份路径。\n", NANDROID_ERROR_GENERAL);
 
     // estimate backup size and ensure we have enough free space available on backup_path
     if (check_backup_size(backup_path) < 0)
-        return print_and_error("Not enough free space: backup cancelled.\n", NANDROID_ERROR_GENERAL);
+        return print_and_error("没有足够的空闲空间：备份取消。\n", NANDROID_ERROR_GENERAL);
 
     // moved after backup size check to fix pause before showing low space prompt
     // this is caused by friendly log view triggering on ui_set_background(BACKGROUND_ICON_INSTALLING) call
@@ -884,7 +885,7 @@ int twrp_tar_extract_wrapper(const char* popen_command, const char* backup_path,
     set_perf_mode(1);
     FILE *fp = __popen(tmp, "r");
     if (fp == NULL) {
-        ui_print("Unable to execute tar.\n");
+        ui_print("无法运行tar。\n");
         set_perf_mode(0);
         return -1;
     }
@@ -936,7 +937,7 @@ int twrp_restore_wrapper(const char* backup_file_image, const char* backup_path,
         int index = 0;
         sprintf(path, "%s%03i", main_filename, index);
         while (file_found(path)) {
-            ui_print("  * Restoring archive %d\n", index + 1);
+            ui_print("  * 正在恢复存档%d\n", index + 1);
             sprintf(cmd, "cd /; tar %s '%s'; exit $?", tar_args, path);
             if (0 != (ret = twrp_tar_extract_wrapper(cmd, backup_path, callback)))
                 return ret;
@@ -946,7 +947,7 @@ int twrp_restore_wrapper(const char* backup_file_image, const char* backup_path,
     } else {
         //single volume archive
         sprintf(cmd, "cd %s; tar %s '%s'; exit $?", backup_path, tar_args, backup_file_image);
-        ui_print("Restoring archive %s\n", BaseName(backup_file_image));
+        ui_print("正在恢复存档%s\n", BaseName(backup_file_image));
         ret = twrp_tar_extract_wrapper(cmd, backup_path, callback);
     }
     return ret;
@@ -965,12 +966,12 @@ int twrp_restore(const char* backup_path) {
     last_key_ev = timenow_msec();
 #endif
     if (ensure_path_mounted(backup_path) != 0)
-        return print_and_error("Can't mount backup path\n", NANDROID_ERROR_GENERAL);
+        return print_and_error("无法挂载备份路径\n", NANDROID_ERROR_GENERAL);
 
     char tmp[PATH_MAX];
     if (enable_md5sum.value) {
         if (0 != check_twrp_md5sum(backup_path))
-            return print_and_error("MD5 mismatch!\n", NANDROID_ERROR_GENERAL);
+            return print_and_error("MD5丢失！\n", NANDROID_ERROR_GENERAL);
     }
 
     ui_show_indeterminate_progress(); // call after verify_nandroid_md5sum() as it will reset the progress
@@ -1067,7 +1068,7 @@ int twrp_restore(const char* backup_path) {
 // backup_data_media can be set to 1 only in "custom backup and restore" menu AND if is_data_media() && !twrp_backup_mode.value
 int nandroid_backup_datamedia(const char* backup_path) {
     char tmp[PATH_MAX];
-    ui_print("\n>> Backing up /data/media...\n");
+    ui_print("\n>> 正在备份/data/media...\n");
     if (is_data_media_volume_path(backup_path)) {
         // non fatal failure
         LOGE("  - can't backup folder to its self, skipping...\n");
@@ -1109,9 +1110,9 @@ int nandroid_backup_datamedia(const char* backup_path) {
     ensure_path_unmounted("/data");
 
     if (0 != ret)
-        return print_and_error("Failed to backup /data/media!\n", ret);
+        return print_and_error("备份/data/media失败！\n", ret);
 
-    ui_print("Backup of /data/media completed.\n");
+    ui_print("备份/data/media完毕...\n");
     return 0;
 }
 
@@ -1160,16 +1161,16 @@ int nandroid_restore_datamedia(const char* backup_path) {
     }
 
     if (0 != format_unknown_device(NULL, "/data/media", NULL))
-        return print_and_error("Error while erasing /data/media\n", NANDROID_ERROR_GENERAL);
+        return print_and_error("清除/data/media时出错\n", NANDROID_ERROR_GENERAL);
 
     // data can be unmounted by format_unknown_device()
     if (0 != ensure_path_mounted("/data"))
         return -1;
 
     if (0 != do_tar_extract(tmp, backup_file_image, "/data", callback))
-        return print_and_error("Failed to restore /data/media!\n", NANDROID_ERROR_GENERAL);
+        return print_and_error("恢复/data/media失败！\n", NANDROID_ERROR_GENERAL);
 
-    ui_print("Restore of /data/media completed.\n");
+    ui_print("恢复/data/media完毕。\n");
     return 0;
 }
 
@@ -1179,7 +1180,7 @@ int gen_nandroid_md5sum(const char* backup_path) {
     int ret = -1;
     int numFiles = 0;
 
-    ui_print("\n>> Generating md5 sum...\n");
+    ui_print("\n>> 正在生成md5码...\n");
     ensure_path_mounted(backup_path);
 
     // this will exclude subfolders!
@@ -1223,7 +1224,7 @@ int verify_nandroid_md5sum(const char* backup_path) {
     char line[PATH_MAX];
     char md5file[PATH_MAX];
 
-    ui_print("\n>> Checking MD5 sums...\n");
+    ui_print("\n>> 正在检查MD5码...\n");
     ensure_path_mounted(backup_path);
     sprintf(md5file, "%s/nandroid.md5", backup_path);
     FILE *fp = fopen(md5file, "r");

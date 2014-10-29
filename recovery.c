@@ -405,7 +405,7 @@ erase_volume(const char *volume) {
         }
     }
 
-    ui_print("Formatting %s...\n", volume);
+    ui_print("正在格式化%s...\n", volume);
 
     ensure_path_unmounted(volume);
     int result = format_volume(volume);
@@ -631,11 +631,11 @@ get_menu_selection(const char** headers, char** items, int menu_only,
                 wrap_count = 0;
                 if (ui_get_rainbow_mode()) {
                     ui_set_rainbow_mode(0);
-                    ui_print("Rainbow mode disabled\n");
+                    ui_print("彩虹模式关闭\n");
                 }
                 else {
                     ui_set_rainbow_mode(1);
-                    ui_print("Rainbow mode enabled!\n");
+                    ui_print("彩虹模式打开！\n");
                 }
             }
         }
@@ -657,7 +657,7 @@ update_directory(const char* path, const char* unmount_when_done,
                  int* wipe_cache) {
     ensure_path_mounted(path);
 
-    const char* MENU_HEADERS[] = { "Choose a package to install:",
+    const char* MENU_HEADERS[] = { "选择一个刷机包来安装：",
                                    path,
                                    "",
                                    NULL };
@@ -815,23 +815,24 @@ int install_zip(const char* packagefilepath) {
 void
 wipe_data(int confirm) {
     const char* headers[] = {
-        "Wipe all user data ?",
+        "清除所有用户数据 ?",
         "   data | cache | datadata",
         "   sd-ext| android_secure",
         "",
         NULL
     };
 
-    if (confirm && !confirm_with_headers(headers, "Yes - Wipe all user data")) {
+    if (confirm && !confirm_with_headers(headers, "是 - 清除所有用户数据")) {
         return;
     }
 
-    ui_print("\n-- Wiping data...\n");
+    ui_print("\n-- 清除data...\n");
     device_wipe_data();
     erase_volume("/data");
     erase_volume("/cache");
     if (has_datadata()) {
         erase_volume("/datadata");
+
     }
 
     erase_volume("/sd-ext");
@@ -851,7 +852,7 @@ wipe_data(int confirm) {
         }
         free_string_array(extra_paths);
     }
-    ui_print("Data wipe complete.\n");
+    ui_print("Data清除完毕。\n");
 }
 
 int enter_sideload_mode(int status) {
@@ -864,7 +865,7 @@ int enter_sideload_mode(int status) {
                                 NULL
     };
 
-    static char* list[] = { "Cancel sideload", NULL };
+    static char* list[] = { "取消sideload", NULL };
     int icon = ui_get_background_icon();
     int wipe_cache = 0;
 
@@ -880,14 +881,14 @@ int enter_sideload_mode(int status) {
         status = ret;
         if (status != INSTALL_SUCCESS) {
             ui_set_background(BACKGROUND_ICON_ERROR);
-            ui_print("Installation aborted.\n");
+            ui_print("安装中止。\n");
         } else {
             if (wipe_cache && erase_volume("/cache")) {
                 LOGE("Cache wipe (requested by package) failed.\n");
             }
             if (ui_IsTextVisible()) {
                 ui_set_background(icon);
-                ui_print("\nInstall from ADB complete.\n");
+                ui_print("\n从ADB安装完毕。\n");
             }
         }
     }
@@ -952,9 +953,9 @@ prompt_and_wait(int status) {
                     if (ui_IsTextVisible()) {
                         wipe_data_menu();
                     } else {
-                        ui_print("\n-- Wiping cache...\n");
-                        erase_volume("/cache");
-                        ui_print("Cache wipe complete.\n");
+                    ui_print("\n-- 正在清除cache...\n");
+                    erase_volume("/cache");
+                    ui_print("Cache清除完成。\n");
                     }
                     if (!ui_IsTextVisible()) return;
                     break;
@@ -1206,6 +1207,7 @@ main(int argc, char **argv) {
 #ifdef PHILZ_TOUCH_RECOVERY
     print_libtouch_version(0);
 #endif
+    ui_print("作者：淡忘_小GG\n");
 
     int st_cur, st_max;
     if (stage != NULL && sscanf(stage, "%d/%d", &st_cur, &st_max) == 2) {
@@ -1222,7 +1224,7 @@ main(int argc, char **argv) {
     sehandle = selabel_open(SELABEL_CTX_FILE, seopts, 1);
 
     if (!sehandle) {
-        ui_print("Warning:  No file_contexts\n");
+        ui_print("警告：没有file_contexts\n");
     }
 
     LOGI("device_recovery_start()\n");
@@ -1263,7 +1265,7 @@ main(int argc, char **argv) {
             }
         }
         if (status != INSTALL_SUCCESS) {
-            ui_print("Installation aborted.\n");
+            ui_print("安装中止。\n");
 
             // If this is an eng or userdebug build, then automatically
             // turn the text display on if the script fails so the error
@@ -1281,13 +1283,13 @@ main(int argc, char **argv) {
         if (wipe_media) preserve_data_media(1);
         if (has_datadata() && erase_volume("/datadata")) status = INSTALL_ERROR;
         if (wipe_cache && erase_volume("/cache")) status = INSTALL_ERROR;
-        if (status != INSTALL_SUCCESS) ui_print("Data wipe failed.\n");
+        if (status != INSTALL_SUCCESS) ui_print("Data清除失败。\n");
     } else if (wipe_cache) {
         if (wipe_cache && erase_volume("/cache")) status = INSTALL_ERROR;
-        if (status != INSTALL_SUCCESS) ui_print("Cache wipe failed.\n");
+        if (status != INSTALL_SUCCESS) ui_print("Cache清除失败。\n");
     } else if (wipe_media) {
         if (is_data_media() && erase_volume("/data/media")) status = INSTALL_ERROR;
-        if (status != INSTALL_SUCCESS) ui_print("Media wipe failed.\n");
+        if (status != INSTALL_SUCCESS) ui_print("Media清除失败。\n");
     } else if (sideload) {
         status = enter_sideload_mode(status);
     } else if (!just_exit) {
@@ -1331,10 +1333,10 @@ main(int argc, char **argv) {
     // We reach here when in main menu we choose reboot main system or on success install of boot scripts and recovery commands
     finish_recovery(send_intent);
     if (shutdown_after) {
-        ui_print("Shutting down...\n");
+        ui_print("正在关机...\n");
         reboot_main_system(ANDROID_RB_POWEROFF, 0, 0);
     } else {
-        ui_print("Rebooting...\n");
+        ui_print("正在重启...\n");
         reboot_main_system(ANDROID_RB_RESTART, 0, 0);
     }
     return EXIT_SUCCESS;

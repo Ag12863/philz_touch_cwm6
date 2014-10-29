@@ -25,14 +25,14 @@
 char* MENU_HEADERS[] = { NULL };
 
 char* MENU_ITEMS[] = {
-    "Reboot System Now",
-    "Install Zip",
-    "Wipe and Format Options",
-    "Backup and Restore",
-    "Mounts and Storage",
-    "Advanced Functions",
-    "Recovery Settings",
-    "Power Options",
+    "重启设备",
+    "安装Zip刷机包",
+    "清除和格式化选项",
+    "备份和还原",
+    "挂载和大容量储存",
+    "高级选项",
+    "PhilZ设置",
+    "电源选项",
     NULL
 };
 

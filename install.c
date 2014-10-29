@@ -171,8 +171,9 @@ try_update_binary(const char *path, ZipArchive *zip, int* wipe_cache) {
 
     /* Set legacy properties */
     if (foundsetperm && !foundsetmeta) {
-        ui_print("Using legacy property environment for update-binary...\n");
-        ui_print("Please upgrade to latest binary...\n");
+        ui_print("正在为update-binary使用传统特性环境...\n");
+        ui_print("请升级到最新的二进制文件...\n");
+
         if (set_legacy_props() != 0) {
             LOGE("Legacy property environment did not init successfully. Properties may not be detected.\n");
         } else {
@@ -300,7 +301,7 @@ static int
 really_install_package(const char *path, int* wipe_cache)
 {
     ui_set_background(BACKGROUND_ICON_INSTALLING);
-    ui_print("Finding update package...\n");
+    ui_print("正在查找升级包...\n");
     // Give verification half the progress bar...
     // ui_reset_progress();
     // ui_show_progress(VERIFICATION_PROGRESS_FRACTION, VERIFICATION_PROGRESS_TIME);
@@ -313,7 +314,7 @@ really_install_package(const char *path, int* wipe_cache)
         return INSTALL_CORRUPT;
     }
 
-    ui_print("Opening update package...\n");
+    ui_print("正在打开升级包...\n");
 
     int err;
 
@@ -326,7 +327,7 @@ really_install_package(const char *path, int* wipe_cache)
         }
         LOGI("%d key(s) loaded from %s\n", numKeys, PUBLIC_KEYS_FILE);
 
-        ui_print("Verifying update package...\n");
+        ui_print("正在验证升级包...\n");
 
         err = verify_file(path, loadedKeys, numKeys);
         free(loadedKeys);
@@ -348,7 +349,7 @@ really_install_package(const char *path, int* wipe_cache)
 
     /* Verify and install the contents of the package.
      */
-    ui_print("Installing update...\n");
+    ui_print("正在安装更新...\n");
     return try_update_binary(path, &zip, wipe_cache);
 }
 
