@@ -1385,7 +1385,6 @@ static void change_menu_color() {
         "修改日志和输出颜色",
         "修改头部文字颜色",
         "修改电量和时间颜色",
-
         NULL
     };
 
