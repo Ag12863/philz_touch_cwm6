@@ -1031,7 +1031,7 @@ else ifeq ($(TARGET_DEVICE), nex)
     BRIGHTNESS_SYS_FILE := "/sys/class/leds/lcd-backlight/brightness"
 
 #TCL S720T
-else ifeq ($(TARGET_DEVICE), cm_s720t)
+else ifeq ($(TARGET_DEVICE), s720t)
     TARGET_COMMON_NAME := TCL S720t
     TARGET_SCREEN_HEIGHT := 1280
     TARGET_SCREEN_WIDTH := 720

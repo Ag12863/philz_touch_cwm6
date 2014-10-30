@@ -40,14 +40,14 @@ static void
 set_usb_driver(bool enabled) {
     int fd = open("/sys/class/android_usb/android0/enable", O_WRONLY);
     if (fd < 0) {
-        ui_print("failed to open driver control: %s\n", strerror(errno));
+        ui_print("打开硬件控制失败：%s\n", strerror(errno));
         return;
     }
     if (write(fd, enabled ? "1" : "0", 1) < 0) {
-        ui_print("failed to set driver control: %s\n", strerror(errno));
+        ui_print("设置硬件控制失败：%s\n", strerror(errno));
     }
     if (close(fd) < 0) {
-        ui_print("failed to close driver control: %s\n", strerror(errno));
+        ui_print("关闭硬件控制失败：%s\n", strerror(errno));
     }
 }
 
@@ -63,7 +63,7 @@ maybe_restart_adbd() {
     char value[PROPERTY_VALUE_MAX+1];
     int len = property_get("ro.debuggable", value, NULL);
     if (len == 1 && value[0] == '1') {
-        ui_print("Restarting adbd...\n");
+        ui_print("重新启动adbd...\n");
         set_usb_driver(true);
         property_set("ctl.start", "adbd");
     }
@@ -97,8 +97,8 @@ start_sideload() {
     stop_adbd();
     set_usb_driver(true);
 
-    ui_print("\n\nNow send the package you want to apply\n"
-              "to the device with \"adb sideload <filename>\"...\n");
+    ui_print("\n\n现在发送你想使用的刷机包到设备上。\n"
+              "命令 \"adb sideload <文件名>\"...\n");
 
     if ((waiter.child = fork()) == 0) {
         execl("/sbin/recovery", "recovery", "--adbd", NULL);
@@ -122,10 +122,10 @@ apply_from_adb(int* wipe_cache, const char* install_file) {
     struct stat st;
     if (stat(ADB_SIDELOAD_FILENAME, &st) != 0) {
         if (errno == ENOENT) {
-            ui_print("No package received.\n");
+            ui_print("没有收到刷机包。\n");
             return INSTALL_NONE; // Go Back / Cancel
         }
-        ui_print("Error reading package:\n  %s\n", strerror(errno));
+        ui_print("读取刷机包出错：\n  %s\n", strerror(errno));
         return INSTALL_ERROR;
     }
 

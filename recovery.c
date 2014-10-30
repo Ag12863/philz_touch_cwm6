@@ -826,13 +826,12 @@ wipe_data(int confirm) {
         return;
     }
 
-    ui_print("\n-- 清除data...\n");
+    ui_print("\n-- 正在清除data...\n");
     device_wipe_data();
     erase_volume("/data");
     erase_volume("/cache");
     if (has_datadata()) {
         erase_volume("/datadata");
-
     }
 
     erase_volume("/sd-ext");
