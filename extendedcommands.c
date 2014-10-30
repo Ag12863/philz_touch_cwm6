@@ -483,12 +483,12 @@ static void *md5_verify_thread(void *arg) {
 #ifdef PHILZ_TOUCH_RECOVERY
         ui_print_preset_colors(1, "red");
 #endif
-        ui_print("MD5 check: error\n");
+        ui_print("MD5验证：错误\n");
     } else if (ret == 0) {
 #ifdef PHILZ_TOUCH_RECOVERY
         ui_print_preset_colors(1, "green");
 #endif
-        ui_print("MD5 check: success\n");
+        ui_print("MD5验证: 成功\n");	
     }
 
     return NULL;
@@ -507,7 +507,7 @@ void start_md5_display_thread(char* filepath) {
 #ifdef PHILZ_TOUCH_RECOVERY
     ui_print_preset_colors(1, NULL);
 #endif
-    ui_print("Calculating md5sum...\n");
+    ui_print("正在计算md5值...\n");
 
     pthread_create(&tmd5_display, NULL, &md5_display_thread, filepath);
 }
@@ -515,7 +515,7 @@ void start_md5_display_thread(char* filepath) {
 void stop_md5_display_thread() {
     cancel_md5digest = 1;
     if (pthread_kill(tmd5_display, 0) != ESRCH)
-        ui_print("Cancelling md5sum...\n");
+        ui_print("正在取消计算md5值...\n");
 
     pthread_join(tmd5_display, NULL);
     set_ensure_mount_always_true(0);
@@ -537,7 +537,7 @@ void start_md5_verify_thread(char* filepath) {
 #ifdef PHILZ_TOUCH_RECOVERY
     ui_print_preset_colors(1, NULL);
 #endif
-    ui_print("Verifying md5sum...\n");
+    ui_print("正在验证md5值...\n");
 
     pthread_create(&tmd5_verify, NULL, &md5_verify_thread, filepath);
 }
@@ -545,7 +545,7 @@ void start_md5_verify_thread(char* filepath) {
 void stop_md5_verify_thread() {
     cancel_md5digest = 1;
     if (pthread_kill(tmd5_verify, 0) != ESRCH)
-        ui_print("Cancelling md5 check...\n");
+        ui_print("正在取消md5验证...\n");
 
     pthread_join(tmd5_verify, NULL);
     set_ensure_mount_always_true(0);
@@ -3356,12 +3356,12 @@ void show_philz_settings_menu()
 
     for (;;) {
         if (check_root_and_recovery.value)
-            ui_format_gui_menu(item_check_root_and_recovery, "Verify Root on Exit", "(x)");
-        else ui_format_gui_menu(item_check_root_and_recovery, "Verify Root on Exit", "( )");
+            ui_format_gui_menu(item_check_root_and_recovery, "退出时检查Root权限", "(x)");
+        else ui_format_gui_menu(item_check_root_and_recovery, "退出时检查Root权限", "( )");
 
         if (auto_restore_settings.value)
-            ui_format_gui_menu(item_auto_restore, "退出时检查Root权限", "(x)");
-        else ui_format_gui_menu(item_auto_restore, "退出时检查Root权限", "( )");
+            ui_format_gui_menu(item_auto_restore, "自动保存设置", "(x)");
+        else ui_format_gui_menu(item_auto_restore, "自动保存设置", "( )");
 
         int chosen_item = get_menu_selection(headers, list, 0, 0);
         if (chosen_item == GO_BACK)
@@ -3494,8 +3494,8 @@ int show_install_update_menu() {
         else ui_format_gui_menu(item_toggle_signature_check, "签名验证", "( )");
 
         if (install_zip_verify_md5.value)
-            ui_format_gui_menu(item_install_zip_verify_md5, "验证zip的md5码", "(x)");
-        else ui_format_gui_menu(item_install_zip_verify_md5, "验证zip的md5码", "( )");
+            ui_format_gui_menu(item_install_zip_verify_md5, "验证zip的md5值", "(x)");
+        else ui_format_gui_menu(item_install_zip_verify_md5, "验证zip的md5值", "( )");
 
         chosen_item = get_menu_selection(headers, install_menu_items, 0, 0);
         if (chosen_item == 0) {
