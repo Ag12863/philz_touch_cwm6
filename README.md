@@ -17,7 +17,7 @@ Check these two patches are present in your build/ directory
 
 Clone philz recovery to bootable/recovery-philz folder
 
-    git clone https://github.com/PhilZ-cwm6/philz_touch_cwm6 bootable/recovery-philz -b cm-11.0
+    git clone https://github.com/Ag12863/philz_touch_cwm6 bootable/recovery-philz -b cm-11.0
 
 Now build with RECOVERY_VARIANT flag set to philz:
 
