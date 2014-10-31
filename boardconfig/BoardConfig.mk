@@ -1037,6 +1037,12 @@ else ifeq ($(TARGET_DEVICE), s720t)
     TARGET_SCREEN_WIDTH := 720
     BRIGHTNESS_SYS_FILE := "/sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness"
 
+#ZTE V889D 
+else ifeq ($(TARGET_DEVICE), atlas40)
+    TARGET_COMMON_NAME := ZTE V889D
+    TARGET_SCREEN_HEIGHT := 800
+    TARGET_SCREEN_WIDTH := 480
+    BRIGHTNESS_SYS_FILE := "/sys/class/leds/lcd-backlight/brightness"
 endif
 #---- end device specific config
 

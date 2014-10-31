@@ -3411,11 +3411,12 @@ void show_philz_settings_menu()
                 ui_print(EXPAND(RECOVERY_MOD_VERSION) "\n");
                 ui_print("编译版本: " EXPAND(PHILZ_BUILD) " - " EXPAND(TARGET_COMMON_NAME) "\n");
                 ui_print("CWM版本: " EXPAND(CWM_BASE_VERSION) "\n");
+                ui_print("编译作者：淡忘_小GG\n");
 #ifdef PHILZ_TOUCH_RECOVERY
                 print_libtouch_version(1);
 #endif
-                //ui_print(EXPAND(BUILD_DATE)"\n");
-                ui_print("编译时间 %s at %s\n", __DATE__, __TIME__);
+                //ui_print(RECOVERY_BUILD_TIME)"\n");
+                ui_print("编译时间: "EXPAND(RECOVERY_BUILD_TIME)"\n");
                 break;
             }
         }
@@ -4596,8 +4597,8 @@ void show_advanced_menu() {
     for (;;) {
         if (is_data_media()) {
             if (use_migrated_storage())
-                list[6] = "Sdcard target: /data/media/0";
-            else list[6] = "Sdcard target: /data/media";
+                list[6] = "SD卡目标: /data/media/0";
+            else list[6] = "SD卡目标: /data/media";
         }
 
 #ifdef ENABLE_LOKI

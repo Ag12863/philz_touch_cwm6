@@ -1206,7 +1206,6 @@ main(int argc, char **argv) {
 #ifdef PHILZ_TOUCH_RECOVERY
     print_libtouch_version(0);
 #endif
-    ui_print("作者：淡忘_小GG\n");
 
     int st_cur, st_max;
     if (stage != NULL && sscanf(stage, "%d/%d", &st_cur, &st_max) == 2) {
