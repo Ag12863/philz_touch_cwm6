@@ -4046,7 +4046,7 @@ void show_partition_format_menu() {
         if (!is_data_media()) {
             list[formatable_volumes] = NULL;
 #ifdef USE_F2FS
-            list[formatable_volumes] = "t转换f2fs <-> ext4格式";
+            list[formatable_volumes] = "转换f2fs <-> ext4格式";
             list[formatable_volumes + 1] = NULL;
 #endif
         } else {
