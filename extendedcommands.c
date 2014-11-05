@@ -4046,14 +4046,14 @@ void show_partition_format_menu() {
         if (!is_data_media()) {
             list[formatable_volumes] = NULL;
 #ifdef USE_F2FS
-            list[formatable_volumes] = "toggle f2fs <-> ext4 migration";
+            list[formatable_volumes] = "t转换f2fs <-> ext4格式";
             list[formatable_volumes + 1] = NULL;
 #endif
         } else {
-            list[formatable_volumes] = "format /data and /data/media (/sdcard)";
+            list[formatable_volumes] = "格式化/data和/data/media (/sdcard)";
             list[formatable_volumes + 1] = NULL;
 #ifdef USE_F2FS
-            list[formatable_volumes + 1] = "toggle f2fs <-> ext4 migration";
+            list[formatable_volumes + 1] = "转换f2fs <-> ext4格式";
             list[formatable_volumes + 2] = NULL;
 #endif
         }
@@ -4071,14 +4071,14 @@ void show_partition_format_menu() {
             } else
 #endif
             {
-                if (!confirm_selection("format /data and /data/media (/sdcard)", confirm))
+                if (!confirm_selection("格式化/data和/data/media (/sdcard)", confirm))
                     continue;
-                ui_print("Formatting /data...\n");
+                ui_print("格式化data...\n");
                 preserve_data_media(0);
                 if (0 != format_volume("/data"))
-                    LOGE("Error formatting /data!\n");
+                    LOGE("格式化data出错!\n");
                 else
-                    ui_print("Done.\n");
+                    ui_print("完成.\n");
                 preserve_data_media(1);
             }
             setup_data_media(1); // recreate /data/media with proper permissions, mount /data and unmount when done
@@ -4103,32 +4103,32 @@ void show_partition_format_menu() {
                     show_format_ext4_or_f2fs_menu(e->path);
                     continue;
                 } else {
-                    ui_print("unsupported file system (%s)\n", e->type);
+                    ui_print("不支持的文件系统（%s）\n", e->type);
                 }
             } else
 #endif
             {
                 if (!confirm_selection(confirm_string, confirm))
                     continue;
-                ui_print("Formatting %s...\n", e->path);
+                ui_print("正在格式化%s...\n", e->path);
                 if (0 != format_volume(e->path))
-                    LOGE("Error formatting %s!\n", e->path);
+                    LOGE("格式化%s出错！\n", e->path);
                 else
-                    ui_print("Done.\n");
+                    ui_print("完成.\n");
             }
         }
 #ifdef USE_F2FS
         else if ((is_data_media() && chosen_item == (formatable_volumes + 1)) ||
                     (!is_data_media() && chosen_item == (formatable_volumes))) {
             enable_f2fs_ext4_conversion ^= 1;
-            ui_print("ext4 <-> f2fs conversion %s\n", enable_f2fs_ext4_conversion ? "enabled" : "disabled");
+            ui_print("ext4 <-> f2fs转换%s\n", enable_f2fs_ext4_conversion ? "打开" : "关闭");
         }
 #endif
     }
 }
 
 int show_partition_mounts_menu() {
-    const char* headers[] = { "Mounts and Storage", NULL };
+    const char* headers[] = { "挂载和存储", NULL };
     char* list[256];
 
     int i = 0;
@@ -4193,10 +4193,10 @@ int show_partition_mounts_menu() {
 
             if (is_path_mounted(e->path)) {
                 if (0 != ensure_path_unmounted(e->path))
-                    LOGE("Error unmounting %s!\n", e->path);
+                    LOGE("取消挂载%s出错 %s!\n", e->path);
             } else {
                 if (0 != ensure_path_mounted(e->path))
-                    LOGE("Error mounting %s!\n", e->path);
+                    LOGE("挂载%s出错 %s!\n", e->path);
             }
         } else {
             // chosen_item == mountable_volumes && is_vold_ums_capable
