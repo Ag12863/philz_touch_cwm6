@@ -1048,12 +1048,27 @@ else ifeq ($(TARGET_DEVICE), s720t)
     TARGET_SCREEN_WIDTH := 720
     BRIGHTNESS_SYS_FILE := "/sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness"
 
+#Lenovo S810t
+else ifeq ($(TARGET_DEVICE), S810t)
+    TARGET_COMMON_NAME := Lenovo S810t
+    TARGET_SCREEN_HEIGHT := 1280
+    TARGET_SCREEN_WIDTH := 720
+    BRIGHTNESS_SYS_FILE := "/sys/class/leds/lcd-backlight/brightness\"
+
 #ZTE V889D 
 else ifeq ($(TARGET_DEVICE), atlas40)
     TARGET_COMMON_NAME := ZTE V889D
     TARGET_SCREEN_HEIGHT := 800
     TARGET_SCREEN_WIDTH := 480
     BRIGHTNESS_SYS_FILE := "/sys/class/leds/lcd-backlight/brightness"
+
+#lenovo A808T
+else ifeq ($(TARGET_DEVICE), a808t)
+    TARGET_COMMON_NAME := lenovo a808t
+    TARGET_SCREEN_HEIGHT := 1280
+    TARGET_SCREEN_WIDTH := 720
+    BRIGHTNESS_SYS_FILE := "/sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness"
+
 endif
 #---- end device specific config
 

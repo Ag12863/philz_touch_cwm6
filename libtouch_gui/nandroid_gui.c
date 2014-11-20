@@ -88,7 +88,7 @@ int user_cancel_nandroid(FILE **fp, const char* backup_file_image, int is_backup
     if (*nand_starts) {
         ui_clear_key_queue();
         ui_print_preset_colors(2, NULL);
-        ui_print("\nPress Back to cancel.\n \n \n");
+        ui_print("\n按任意键取消。\n \n \n");
         *nand_starts = 0;
     }
 
@@ -104,7 +104,7 @@ int user_cancel_nandroid(FILE **fp, const char* backup_file_image, int is_backup
         // support cancel nandroid job
         if (key_event == GO_BACK) {
             ui_set_nandroid_print(0, 2);
-            ui_print("\nReally cancel? (press Back)\n");
+            ui_print("\n真的要取消吗？（按返回键）\n");
             ui_set_nandroid_print(0, 0);
             is_time_interval_passed(0);
             ui_clear_key_queue();
@@ -119,12 +119,12 @@ int user_cancel_nandroid(FILE **fp, const char* backup_file_image, int is_backup
                 return 0;
             }
 
-            ui_print("Cancelling, please wait...\n");
+            ui_print("正在取消，请等待...\n");
             ui_clear_key_queue();
             __pclose(*fp);
             if (is_backup) {
                 char cmd[PATH_MAX];
-                ui_print("Deleting backup...\n");
+                ui_print("正在删除备份...\n");
                 sync(); // before deleting backup folder
                 sprintf(cmd, "rm -rf '%s'", DirName(backup_file_image));
                 __system(cmd);
@@ -133,7 +133,7 @@ int user_cancel_nandroid(FILE **fp, const char* backup_file_image, int is_backup
             finish_nandroid_job(); // will also do a sync() and some ui_prints
             if (!is_backup) {
                 // heading \n to not bother with text spanning on one or two lines, depending on device res
-                ui_print("\nPartition was left corrupted after cancel command!\n");
+                ui_print("\n在取消命令后分区被损坏！\n");
             }
 
             ui_print_preset_colors(0, NULL);
